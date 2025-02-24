@@ -221,7 +221,7 @@ func mainLoop(window *glfw.Window, program uint32, vao uint32) {
 
 		for cubePosition := range cubePositions {
 			model = mgl32.Translate3D(cubePositions[cubePosition].X(), cubePositions[cubePosition].Y(), cubePositions[cubePosition].Z())
-			model = model.Mul4(mgl32.HomogRotate3D(mgl32.DegToRad(float32(cubePosition * 20)), mgl32.Vec3{1, 0.3, 0.5}.Normalize()))
+			model = model.Mul4(mgl32.HomogRotate3D(mgl32.DegToRad(float32(cubePosition * 20) + float32(glfw.GetTime() * 25)), mgl32.Vec3{1, 0.3, 0.5}.Normalize()))
 			gl.UniformMatrix4fv(modelLoc, 1, false, (*float32)(gl.Ptr(&model[0])))
 			gl.DrawArrays(gl.TRIANGLES, 0, 36)
 		}
