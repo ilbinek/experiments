@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-gl/gl/v4.6-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/go-gl/mathgl/mgl32"
 )
 
 // initOpenGL initializes OpenGL and returns an initialized program.
@@ -60,18 +61,62 @@ func initOpenGL() uint32 {
 // makeVao initializes and return a Vertex Arra object with a triangle
 func makeVao() uint32 {
 	// Define the vertices and colors of the striangle
-	vertices := []float32{
+	/*vertices := []float32{
 		// Position			// Color			// Texture coordinates
 		0.5, 0.5, 0.0,		1.0, 0.0, 0.0,		1.0, 1.0,	// top right
 		0.5, -0.5, 0.0,		0.0, 1.0, 0.0,		1.0, 0.0,	// bottom right
 		-0.5, -0.5, 0.0,	0.0, 0.0, 1.0,		0.0, 0.0,	// bottom left
 		-0.5, 0.5, 0.0,		1.0, 1.0, 0.0,		0.0, 1.0,	// top left
+	}*/
+
+	vertices := []float32{
+		-0.5, -0.5, -0.5,  0.0, 0.0,
+		 0.5, -0.5, -0.5,  1.0, 0.0,
+		 0.5,  0.5, -0.5,  1.0, 1.0,
+		 0.5,  0.5, -0.5,  1.0, 1.0,
+		-0.5,  0.5, -0.5,  0.0, 1.0,
+		-0.5, -0.5, -0.5,  0.0, 0.0,
+	
+		-0.5, -0.5,  0.5,  0.0, 0.0,
+		 0.5, -0.5,  0.5,  1.0, 0.0,
+		 0.5,  0.5,  0.5,  1.0, 1.0,
+		 0.5,  0.5,  0.5,  1.0, 1.0,
+		-0.5,  0.5,  0.5,  0.0, 1.0,
+		-0.5, -0.5,  0.5,  0.0, 0.0,
+	
+		-0.5,  0.5,  0.5,  1.0, 0.0,
+		-0.5,  0.5, -0.5,  1.0, 1.0,
+		-0.5, -0.5, -0.5,  0.0, 1.0,
+		-0.5, -0.5, -0.5,  0.0, 1.0,
+		-0.5, -0.5,  0.5,  0.0, 0.0,
+		-0.5,  0.5,  0.5,  1.0, 0.0,
+	
+		 0.5,  0.5,  0.5,  1.0, 0.0,
+		 0.5,  0.5, -0.5,  1.0, 1.0,
+		 0.5, -0.5, -0.5,  0.0, 1.0,
+		 0.5, -0.5, -0.5,  0.0, 1.0,
+		 0.5, -0.5,  0.5,  0.0, 0.0,
+		 0.5,  0.5,  0.5,  1.0, 0.0,
+	
+		-0.5, -0.5, -0.5,  0.0, 1.0,
+		 0.5, -0.5, -0.5,  1.0, 1.0,
+		 0.5, -0.5,  0.5,  1.0, 0.0,
+		 0.5, -0.5,  0.5,  1.0, 0.0,
+		-0.5, -0.5,  0.5,  0.0, 0.0,
+		-0.5, -0.5, -0.5,  0.0, 1.0,
+	
+		-0.5,  0.5, -0.5,  0.0, 1.0,
+		 0.5,  0.5, -0.5,  1.0, 1.0,
+		 0.5,  0.5,  0.5,  1.0, 0.0,
+		 0.5,  0.5,  0.5,  1.0, 0.0,
+		-0.5,  0.5,  0.5,  0.0, 0.0,
+		-0.5,  0.5, -0.5,  0.0, 1.0,
 	}
 
-	indices := []uint32{
+	/*indices := []uint32{
 		0, 1, 3,	// first triangle
 		1, 2, 3,	// second triangle
-	}
+	}*/
 
 	// Create a Vertex Buffer Object and Vertex Array Object
 	var vbo, vao, ebo uint32
@@ -86,21 +131,18 @@ func makeVao() uint32 {
 	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
 	gl.BufferData(gl.ARRAY_BUFFER, len(vertices)*4, gl.Ptr(vertices), gl.STATIC_DRAW)
 
-	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo)
+	/*gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo)
 	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indices)*4, gl.Ptr(indices), gl.STATIC_DRAW)
+	*/
 
 	// Set up vertex attribute pointers
 	// Position attribute (location = 0)
-	gl.VertexAttribPointerWithOffset(0, 3, gl.FLOAT, false, 8*4, 0)
+	gl.VertexAttribPointerWithOffset(0, 3, gl.FLOAT, false, 5*4, 0)
 	gl.EnableVertexAttribArray(0)
 
-	// Color attribute (location = 1)
-	gl.VertexAttribPointerWithOffset(1, 3, gl.FLOAT, false, 8*4, 3*4)
+	// Texture loca attribute (location = 1)
+	gl.VertexAttribPointerWithOffset(1, 2, gl.FLOAT, false, 5*4, 3*4)
 	gl.EnableVertexAttribArray(1)
-
-	// Texture loca attribute (location = 2)
-	gl.VertexAttribPointerWithOffset(2, 2, gl.FLOAT, false, 8*4, 6*4)
-	gl.EnableVertexAttribArray(2)
 
 	// Unbind the VBO and VAO
 	gl.BindBuffer(gl.ARRAY_BUFFER, 0)
@@ -113,6 +155,7 @@ func makeVao() uint32 {
 func mainLoop(window *glfw.Window, program uint32, vao uint32) {
 	// Set the background color (RGBA)
 	gl.ClearColor(0.2, 0.3, 0.4, 1.0)
+	gl.Enable(gl.DEPTH_TEST)
 
 	// Load the texture1
 	texture1, err := newTexture("container.jpg")
@@ -125,6 +168,19 @@ func mainLoop(window *glfw.Window, program uint32, vao uint32) {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	/*cubePositions := []mgl32.Vec3{
+		{0.0, 0.0, 0.0},
+		{2.0, 5.0, -15.0},
+		{-1.5, -2.2, -2.5},
+		{-3.8, -2.0, -12.3},
+		{2.4, -0.4, -3.5},
+		{-1.7, 3.0, -7.5},
+		{1.3, -2.0, -2.5},
+		{1.5, 2.0, -2.5},
+		{1.5, 0.2, -1.5},
+		{-1.3, 1.0, -1.5},
+	}*/
 
 	// Main loop
 	for !window.ShouldClose() {
@@ -149,8 +205,35 @@ func mainLoop(window *glfw.Window, program uint32, vao uint32) {
 		gl.Uniform1i(gl.GetUniformLocation(program, gl.Str("texture1\x00")), 0)
 		gl.Uniform1i(gl.GetUniformLocation(program, gl.Str("texture2\x00")), 1)
 
+		model := mgl32.HomogRotate3D(mgl32.DegToRad(float32(glfw.GetTime()*40)), mgl32.Vec3{0.5, 1, 0})
+		view := mgl32.Translate3D(0, 0, -3)
+		width, height := window.GetSize()
+		aspect := float32(width) / float32(height)
+		projection := mgl32.Perspective(mgl32.DegToRad(45), aspect, 0.1, 100.0)
+
+		fmt.Println("model:\n", model)
+		fmt.Println("view:\n", view)
+		fmt.Println("projection:\n", projection)
+
+		// Create a transformation matrix
+		modelLoc := gl.GetUniformLocation(program, gl.Str("model\x00"))
+		viewLoc := gl.GetUniformLocation(program, gl.Str("view\x00"))
+		projectionLoc := gl.GetUniformLocation(program, gl.Str("projection\x00"))
+		gl.UniformMatrix4fv(modelLoc, 1, false, (*float32)(gl.Ptr(&model[0])))
+		gl.UniformMatrix4fv(viewLoc, 1, false, (*float32)(gl.Ptr(&view[0])))
+		gl.UniformMatrix4fv(projectionLoc, 1, false, (*float32)(gl.Ptr(&projection[0])))
+
+		/*for cubePosition := range cubePositions {
+			model = mgl32.Translate3D(cubePositions[cubePosition].X(), cubePositions[cubePosition].Y(), cubePositions[cubePosition].Z())
+			model = model.Mul4(mgl32.HomogRotate3D(float32(cubePosition * 20), mgl32.Vec3{1, 0.3, 0.5}))
+			gl.UniformMatrix4fv(modelLoc, 1, false, (*float32)(gl.Ptr(&model[0])))
+			gl.DrawArrays(gl.TRIANGLES, 0, 36)
+		}*/
+
+		gl.DrawArrays(gl.TRIANGLES, 0, 36)
+
 		// Draw the triangle
-		gl.DrawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, nil)
+		//gl.DrawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, nil)
 
 		// Swap buffers and poll events
 		window.SwapBuffers()

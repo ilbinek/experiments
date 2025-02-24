@@ -2,16 +2,17 @@ package main
 
 var vertexShaderSource = `
 #version 460 core
-layout (location = 0) in vec3 aPos;		// Vertex position
-layout (location = 1) in vec3 aColor;	// Vertex color
-layout (location = 2) in vec2 aTextCoord;	// Vertex color
+layout (location = 0) in vec3 aPos;			// Vertex position
+layout (location = 1) in vec2 aTextCoord;	// Vertex color
 
-out vec3 ourColor;
 out vec2 TexCoord;
 
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
 void main() {
-	gl_Position = vec4(aPos, 1.0);		// Set the vertex position
-	ourColor = aColor;					// Set the vertex color
+	gl_Position = projection * view * model * vec4(aPos, 1.0);		// Set the vertex position
 	TexCoord = aTextCoord;
 }
 ` + "\x00"
@@ -19,9 +20,9 @@ void main() {
 // Fragment Shader Source Code
 var fragmentShaderSource = `
 #version 460 core
-out vec4 fragColor;
-                      // Output color
-in vec3 ourColor;                        // Input color from vertex shader
+out vec4 fragColor;		// Output color
+                      
+in vec3 ourColor;     	// Input color from vertex shader
 in vec2 TexCoord;
 
 uniform sampler2D texture1;

@@ -48,7 +48,7 @@ func initGlfw() *glfw.Window {
 	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
 
 	// Create a windowed mode window and it's OpenGL context
-	window, err := glfw.CreateWindow(800, 600, "Testing", nil, nil)
+	window, err := glfw.CreateWindow(800, 600, "LolTest", nil, nil)
 	if err != nil {
 		log.Fatalln("failed to create window:", err)
 	}
