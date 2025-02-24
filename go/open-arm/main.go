@@ -169,7 +169,7 @@ func mainLoop(window *glfw.Window, program uint32, vao uint32) {
 		log.Fatalln(err)
 	}
 
-	/*cubePositions := []mgl32.Vec3{
+	cubePositions := []mgl32.Vec3{
 		{0.0, 0.0, 0.0},
 		{2.0, 5.0, -15.0},
 		{-1.5, -2.2, -2.5},
@@ -180,7 +180,7 @@ func mainLoop(window *glfw.Window, program uint32, vao uint32) {
 		{1.5, 2.0, -2.5},
 		{1.5, 0.2, -1.5},
 		{-1.3, 1.0, -1.5},
-	}*/
+	}
 
 	// Main loop
 	for !window.ShouldClose() {
@@ -205,15 +205,11 @@ func mainLoop(window *glfw.Window, program uint32, vao uint32) {
 		gl.Uniform1i(gl.GetUniformLocation(program, gl.Str("texture1\x00")), 0)
 		gl.Uniform1i(gl.GetUniformLocation(program, gl.Str("texture2\x00")), 1)
 
-		model := mgl32.HomogRotate3D(mgl32.DegToRad(float32(glfw.GetTime()*40)), mgl32.Vec3{0.5, 1, 0})
+		model := mgl32.HomogRotate3D(mgl32.DegToRad(float32(glfw.GetTime()*40)), mgl32.Vec3{0.5, 1, 0}.Normalize())
 		view := mgl32.Translate3D(0, 0, -3)
 		width, height := window.GetSize()
 		aspect := float32(width) / float32(height)
 		projection := mgl32.Perspective(mgl32.DegToRad(45), aspect, 0.1, 100.0)
-
-		fmt.Println("model:\n", model)
-		fmt.Println("view:\n", view)
-		fmt.Println("projection:\n", projection)
 
 		// Create a transformation matrix
 		modelLoc := gl.GetUniformLocation(program, gl.Str("model\x00"))
@@ -223,14 +219,14 @@ func mainLoop(window *glfw.Window, program uint32, vao uint32) {
 		gl.UniformMatrix4fv(viewLoc, 1, false, (*float32)(gl.Ptr(&view[0])))
 		gl.UniformMatrix4fv(projectionLoc, 1, false, (*float32)(gl.Ptr(&projection[0])))
 
-		/*for cubePosition := range cubePositions {
+		for cubePosition := range cubePositions {
 			model = mgl32.Translate3D(cubePositions[cubePosition].X(), cubePositions[cubePosition].Y(), cubePositions[cubePosition].Z())
-			model = model.Mul4(mgl32.HomogRotate3D(float32(cubePosition * 20), mgl32.Vec3{1, 0.3, 0.5}))
+			model = model.Mul4(mgl32.HomogRotate3D(mgl32.DegToRad(float32(cubePosition * 20)), mgl32.Vec3{1, 0.3, 0.5}.Normalize()))
 			gl.UniformMatrix4fv(modelLoc, 1, false, (*float32)(gl.Ptr(&model[0])))
 			gl.DrawArrays(gl.TRIANGLES, 0, 36)
-		}*/
+		}
 
-		gl.DrawArrays(gl.TRIANGLES, 0, 36)
+		//gl.DrawArrays(gl.TRIANGLES, 0, 36)
 
 		// Draw the triangle
 		//gl.DrawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, nil)
