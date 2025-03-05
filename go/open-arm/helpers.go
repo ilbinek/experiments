@@ -59,6 +59,8 @@ func initGlfw() *glfw.Window {
 		gl.Viewport(0, 0, int32(width), int32(height))
 	})
 
+	window.SetInputMode(glfw.CursorMode, glfw.CursorDisabled)
+
 	return window
 }
 

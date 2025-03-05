@@ -11,6 +11,16 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 )
 
+var (
+	cam = Camera{
+		Position: mgl32.Vec3{0, 0, 3},
+		Pitch: 0,
+		Yaw: -90,
+		Up: mgl32.Vec3{0, 1, 0},
+		FirstMouse: true,
+	}
+)
+
 // initOpenGL initializes OpenGL and returns an initialized program.
 func initOpenGL() uint32 {
 	// Initialize OpenGL bindings
@@ -151,6 +161,10 @@ func makeVao() uint32 {
 	return vao
 }
 
+func mouseCallback(window *glfw.Window, xpos, ypos float64) {
+	cam.ProcessMouseMovement(float32(xpos), float32(ypos))
+}
+
 // mainLoop runs the main rendering loop.
 func mainLoop(window *glfw.Window, program uint32, vao uint32) {
 	// Set the background color (RGBA)
@@ -182,10 +196,18 @@ func mainLoop(window *glfw.Window, program uint32, vao uint32) {
 		{-1.3, 1.0, -1.5},
 	}
 
+	deltaTime := 0.0
+	lastFrame := 0.0
+
+	window.SetCursorPosCallback(mouseCallback)
+
 	// Main loop
 	for !window.ShouldClose() {
 		// Process inputs
-		processInputs(window)
+		currentFrame := glfw.GetTime()
+		deltaTime = currentFrame - lastFrame
+		lastFrame = currentFrame
+		processInputs(window, &cam, float32(deltaTime))
 
 		// Clear the screen
 		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
@@ -206,7 +228,9 @@ func mainLoop(window *glfw.Window, program uint32, vao uint32) {
 		gl.Uniform1i(gl.GetUniformLocation(program, gl.Str("texture2\x00")), 1)
 
 		model := mgl32.HomogRotate3D(mgl32.DegToRad(float32(glfw.GetTime()*40)), mgl32.Vec3{0.5, 1, 0}.Normalize())
-		view := mgl32.Translate3D(0, 0, -3)
+
+		view := mgl32.LookAtV(cam.Position, cam.Position.Add(cam.GetFront()), cam.Up)
+
 		width, height := window.GetSize()
 		aspect := float32(width) / float32(height)
 		projection := mgl32.Perspective(mgl32.DegToRad(45), aspect, 0.1, 100.0)
